@@ -58,14 +58,17 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  double start = Timer.time();
   pauseBase = false;
-  baseMove(30, 0.27, 0);
-  waitBase(2000);
-  baseTurn(90, 1.2, 0);
-  waitBase(2000);
+  // baseMove(75, 0.125, 0);
+  // baseTurn(97, 0.95, 0);
+  red10();
+  double final = Timer.time() - start;
+  Controller1.Screen.setCursor(0, 0);
+  while(true) Controller1.Screen.print("Time: %.2f\n", final);
 
   // ..........................................................................
-  // Insert autonomous user code here.
+  
   // ..........................................................................
 }
 
@@ -78,12 +81,26 @@ void autonomous(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-bool tankDrive = true;
+bool tankDrive = true, tankDriveToggle = true;
 void toggleDriveMode() {
   // if(tankDrive) tankDrive = false;
   // else tankDrive = true;
-  printf("toggle\n");
-  tankDrive = false;
+  if(tankDriveToggle) {
+    tankDrive = !tankDrive;
+    tankDriveToggle = false;
+  }
+  wait(200, msec);
+  tankDriveToggle = true;
+}
+
+bool autoIndexToggle = true;
+void toggleAutoIndex() {
+  if(autoIndexToggle) {
+    autoIndex = !autoIndex;
+    autoIndexToggle = false;
+  }
+  wait(200, msec);
+  autoIndexToggle = true;
 }
 
 void usercontrol(void) {
@@ -91,13 +108,31 @@ void usercontrol(void) {
   // User control code here, inside the loop
   double deadBand = 5;
   double leftSpeed, rightSpeed;
+  // bool forceZero = false;
   
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
+    // Controller1.ButtonB.pressed(toggleAutoIndex);
+
+    if(autoIndex) {
+      if(Controller1.ButtonR1.pressing()) shootBall();
+      forceOuttake(Controller1.ButtonL2.pressing());
+      if(Controller1.ButtonX.pressing()) {
+        shootBall();
+        defaultShootSpeed = 20;
+      }else {
+        defaultShootSpeed = 100;
+      }
+    }else {
+      double cycleDir = (Controller1.ButtonR1.pressing() - Controller1.ButtonR2.pressing());
+      Indexer.spin(fwd, cycleDir*100, pct);
+      Shooter.spin(fwd, cycleDir*100, pct);
+    }
+    intake((Controller1.ButtonL1.pressing() - Controller1.ButtonL2.pressing()) * defaultShootSpeed);
+
     Controller1.ButtonY.pressed(toggleDriveMode);
-    printf("tank drive: %.2f\n", FL.velocity(pct));
 
     if(tankDrive) {
       leftSpeed = Controller1.Axis3.value();
@@ -111,21 +146,21 @@ void usercontrol(void) {
     }
 
     if(fabs(leftSpeed) < deadBand) {
-      FL.stop(brake);
-      BL.stop(brake);
+      FL.stop(coast);
+      BL.stop(coast);
     }else {
       FL.spin(fwd, leftSpeed, pct);
       BL.spin(fwd, leftSpeed, pct);
     }
 
     if(fabs(rightSpeed) < deadBand) {
-      FR.stop(brake);
-      BR.stop(brake);
+      FR.stop(coast);
+      BR.stop(coast);
     }else {
       FR.spin(fwd, rightSpeed, pct);
       BR.spin(fwd, rightSpeed, pct);
     }
-    wait(20, msec); // Sleep the task for a short amount of time to
+    wait(5, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }
@@ -138,6 +173,8 @@ int main() {
   task sensorTask(Sensors);
   task odomTask(Odometry);
   task debugTask(Debug);
+  task shooterControlTask(shooterControl);
+  task indexerControlTask(indexerControl);
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);

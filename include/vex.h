@@ -17,6 +17,8 @@
 
 #include "robot-config.h"
 #include "8059SimplePIDInclude/API.h"
+#include "mech-lib.h"
+#include "auton-sets.h"
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \

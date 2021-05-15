@@ -8,14 +8,18 @@ extern motor FL;
 extern motor BL;
 extern motor FR;
 extern motor BR;
-extern inertial Imu;
+// extern inertial Imu;
 extern motor LRoller;
 extern motor RRoller;
 extern motor Shooter;
-extern motor Router;
+extern motor Indexer;
 extern line ShooterLine;
-extern line RouterLine;
+extern line IndexerLine;
+extern encoder LEncoder;
+extern encoder REncoder;
 extern timer Timer;
+
+extern competition Competition;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
