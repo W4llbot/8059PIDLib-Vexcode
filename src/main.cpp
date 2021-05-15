@@ -58,11 +58,12 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  resetCoords(0, 0, 0);
   double start = Timer.time();
   pauseBase = false;
-  // baseMove(75, 0.125, 0);
-  // baseTurn(97, 0.95, 0);
-  red10();
+  baseTurn(180, 0.33, 0, 10);
+  wait(100000000, msec);
+  // red10();
   double final = Timer.time() - start;
   Controller1.Screen.setCursor(0, 0);
   while(true) Controller1.Screen.print("Time: %.2f\n", final);

@@ -1,17 +1,18 @@
 #include "vex.h"
-#define DEFAULT_KP 0.15
-#define DEFAULT_KD 0
+#define DEFAULT_KP 0.23
 #define DEFAULT_KI 0
-#define DEFAULT_TURN_KP 1
+#define DEFAULT_KD 10
+#define DEFAULT_TURN_KP 0.33
 #define DEFAULT_TURN_KI 0
-#define DEFAULT_TURN_KD 30
-#define RAMPING_POW 1
+#define DEFAULT_TURN_KD 10
+#define KI_LIMIT 0
+#define RAMPING_POW 2
 #define DISTANCE_LEEWAY 15
 #define BEARING_LEEWAY 1.5
 #define MAX_POW 100
 
-double targEncdL = 0, targEncdR = 0, targBearing = 0;
-double errorEncdL = 0, errorEncdR = 0, errorBearing = 0;
+double targEncdL = 0, targEncdR = 0;
+double errorEncdL = 0, errorEncdR = 0;
 double powerL = 0, powerR = 0;
 double targPowerL = 0, targPowerR = 0;
 double kP = DEFAULT_KP, kD = DEFAULT_KD, kI = DEFAULT_KI;
@@ -32,6 +33,7 @@ void baseMove(double dis){
 }
 
 void baseMove(double x, double y, double p, double i, double d){
+  printf("baseMove(%.2f, %.2f)\n", x, y);
 	double errY = y-Y;
 	double errX = x-X;
 	double distance = sqrt(errY*errY + errX*errX);
@@ -46,24 +48,58 @@ void baseMove(double x, double y, double p, double i, double d){
   targEncdR += distance/inPerDeg*negator;
 
   kP = p;
+  kI = i;
   kD = d;
 }
 
 void baseMove(double x, double y){
-	baseMove(x,y,0.17,0.15);
+  baseMove(x, y, DEFAULT_KP, DEFAULT_KI, DEFAULT_KD);
 }
 
 
-void baseTurn(double p_bearing, double kp, double ki, double kd){
-  printf("baseTurn(%.2f, %.2f, %.2f)\n", p_bearing, kp, kd);
-  turnMode = true;
-  targBearing = p_bearing;
+void baseTurn(double a, double kp, double ki, double kd){
+  printf("baseTurn(%.2f, %.2f, %.2f)\n", a, kp, kd);
+  double error = a*toRad - angle;
+  double diff = error*baseWidth/inPerDeg/2;
+
+  targEncdL += diff;
+  targEncdR += -diff;
 	kP = kp;
   kI = ki;
 	kD = kd;
 }
-void baseTurn(double bearing){
-  baseTurn(bearing, DEFAULT_TURN_KP, DEFAULT_TURN_KI, DEFAULT_TURN_KD);
+
+void baseTurn(double a){
+  baseTurn(a, DEFAULT_TURN_KP, DEFAULT_TURN_KI, DEFAULT_TURN_KD);
+}
+
+void baseTurnRelative(double a, double p, double i, double d){
+
+  double diff = a*toRad*baseWidth/inPerDeg/2;
+  targEncdL += diff;
+  targEncdR += -diff;
+
+  kP = p;
+  kI = i;
+  kD = d;
+}
+
+void baseTurnRelative(double a){
+  baseTurnRelative(a, DEFAULT_TURN_KP, DEFAULT_TURN_KI, DEFAULT_KD);
+}
+
+void baseTurn(double x, double y, double p, double i, double d, bool inverted){
+	double targAngle = atan2((x-X),(y-Y));
+	if(inverted) targAngle *= -1;
+  double diff = (targAngle - angle + lastResetAngle)*baseWidth/inPerDeg/2;
+  targEncdL += diff;
+  targEncdR += -diff;
+  kP = p;
+  kD = d;
+}
+
+void baseTurn(double x, double y, bool inverted){
+  baseTurn(x,y,DEFAULT_TURN_KP,DEFAULT_TURN_KI,DEFAULT_TURN_KD,inverted);
 }
 
 void powerBase(double l, double r) {
@@ -82,14 +118,14 @@ void timerBase(double l, double r, double t) {
   powerL = 0;
   powerR = 0;
   pauseBase = false;
-  resetCoords(X, Y);
+  resetCoords(X, Y, angle);
 }
 
 void unPauseBase() {
   powerL = 0;
   powerR = 0;
   pauseBase = false;
-  resetCoords(X, Y);
+  resetCoords(X, Y, angle);
 }
 
 void waitBase(double cutoff){
@@ -110,11 +146,13 @@ int Control(){
       errorEncdL = targEncdL - encdL;
       errorEncdR = targEncdR - encdR;
 
-      integralL += errorEncdL * dT;
-      integralR += errorEncdR * dT;
+      if(fabs(errorEncdL) < KI_LIMIT) integralL += errorEncdL;
+      else integralL = 0;
+      if(fabs(errorEncdR) < KI_LIMIT) integralR += errorEncdR;
+      else integralR = 0;
 
-      double deltaErrorEncdL = (errorEncdL - prevErrorEncdL)/dT;
-      double deltaErrorEncdR = (errorEncdR - prevErrorEncdR)/dT;
+      double deltaErrorEncdL = (errorEncdL - prevErrorEncdL);
+      double deltaErrorEncdR = (errorEncdR - prevErrorEncdR);
 
       targPowerL = errorEncdL * kP + integralL * kI + deltaErrorEncdL * kD;
       targPowerR = errorEncdR * kP + integralR * kI + deltaErrorEncdR * kD;
@@ -151,7 +189,6 @@ void resetCoords(double x, double y, double angleInDeg){
   REncoder.resetRotation();
   resetPrevEncd();
 
-  targBearing = angleInDeg * toRad;
   targEncdL = 0;
   targEncdR = 0;
 
