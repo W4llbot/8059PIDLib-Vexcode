@@ -7,7 +7,7 @@
 #define DEFAULT_TURN_KD 10
 #define KI_LIMIT 0
 #define RAMPING_POW 2
-#define DISTANCE_LEEWAY 8
+#define DISTANCE_LEEWAY 10
 #define MAX_POW 100
 
 double targEncdL = 0, targEncdR = 0;
@@ -155,45 +155,29 @@ int Control(){
     if(!pauseBase) {
       errorEncdL = targEncdL - encdL;
       errorEncdR = targEncdR - encdR;
-      // printf("\n");
-      // printf("errorEncd: %.1f\t%.1f\n", errorEncdL, errorEncdR);
-      double deltaErrorEncdL = errorEncdL - prevErrorEncdL;
-      double deltaErrorEncdR = errorEncdR - prevErrorEncdR;
-      // printf("prevErrorEncd: %.1f\t%.1f\n", prevErrorEncdL, prevErrorEncdR);
-      // printf("deltaErrorEncd: %.1f\t%.1f\n", deltaErrorEncdL, deltaErrorEncdR);
-      double pd_targPowerL = errorEncdL * kP + deltaErrorEncdL * kD;
-      double pd_targPowerR = errorEncdR * kP + deltaErrorEncdR * kD;
-      // printf("pd: %.2f\t%.2f\n", pd_targPowerL, pd_targPowerR);
-      double pd_maxTargPower = std::max(fabs(pd_targPowerL), fabs(pd_targPowerR));
-      double setPower = min(pd_maxTargPower, MAX_POW);
-      // printf("setPower: %.2f\n", setPower);
-      double lToR = ((pd_targPowerR != 0)? (pd_targPowerL/pd_targPowerR) : 1);
-      if(lToR != 0){
-          if(fabs(lToR)>=1){
-            targPowerL = setPower*sign(pd_targPowerL);
-            targPowerR = setPower*sign(pd_targPowerR)/fabs(lToR);
-          } else{
-            targPowerL = setPower*sign(pd_targPowerL)*fabs(lToR);
-            targPowerR = setPower*sign(pd_targPowerR);
-        }
-      }
-      // printf("targPower: %.2f\t%.2f\n", targPowerL, targPowerR);
-      double deltaPowerL = targPowerL - powerL;
-      double deltaPowerR = targPowerR - powerR;
-      // printf("power: %.1f\t%.1f\n", powerL, powerR);
-      // printf("delta: %.1f\t%.1f\n", deltaPowerL, deltaPowerR);
-      deltaPowerL = abscap(deltaPowerL, RAMPING_POW);
-      deltaPowerR = abscap(deltaPowerR, RAMPING_POW);
-      // printf("capped delta: %.1f\t%.1f\n", deltaPowerL, deltaPowerR);
-      powerL += deltaPowerL;
-      powerR += deltaPowerR;
-      // printf("updated power: %.1f\t%.1f\n", powerL, powerR);
-      // manual base compensation factor
-      double mod = 0.999; //>1 to make left faster, <1 to make right faster
-      if(mod >= 1) powerR /= mod;
-      else powerL *= mod;
+
+      if(fabs(errorEncdL) < KI_LIMIT) integralL += errorEncdL;
+      else integralL = 0;
+      if(fabs(errorEncdR) < KI_LIMIT) integralR += errorEncdR;
+      else integralR = 0;
+
+      double deltaErrorEncdL = (errorEncdL - prevErrorEncdL);
+      double deltaErrorEncdR = (errorEncdR - prevErrorEncdR);
+
+      targPowerL = errorEncdL * kP + integralL * kI + deltaErrorEncdL * kD;
+      targPowerR = errorEncdR * kP + integralR * kI + deltaErrorEncdR * kD;
+
       prevErrorEncdL = errorEncdL;
       prevErrorEncdR = errorEncdR;
+
+      double deltaPowerL = targPowerL - powerL;
+      powerL += abscap(deltaPowerL, RAMPING_POW);
+      double deltaPowerR = targPowerR - powerR;
+      powerR += abscap(deltaPowerR, RAMPING_POW);
+
+      powerL = abscap(powerL, MAX_POW);
+      powerR = abscap(powerR, MAX_POW);
+
       FL.spin(fwd, powerL, pct);
       BL.spin(fwd, powerL, pct);
       FR.spin(fwd, powerR, pct);

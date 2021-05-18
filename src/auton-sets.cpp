@@ -2,12 +2,12 @@
 #include "auton-sets.h"
 
 void shootPreload() {
-//   defaultShootSpeed = 50;
-//   shootBall();
-//   wait(300, msec);
-//   shootTrigger = false;
-//   defaultShootSpeed = 100;
-//   printf("completed");
+  defaultShootSpeed = 50;
+  shootBall();
+  wait(300, msec);
+  shootTrigger = false;
+  defaultShootSpeed = 100;
+  printf("completed");
 }
 
 // double offset = 0;
@@ -21,21 +21,22 @@ void shootPreload() {
 // #define DEFAULT_TURN_KD 10
 void red10() {
   resetCoords(0, 0, -58.3);
+  shootPreload();
   baseMove(33);
   waitBase(2000);
-  baseTurn(-27, 60, 0.34, 0, 10, false);
+  baseTurn(-27, 60, 0.3, 0, 10, false);
   waitBase(2000);
   intake(100);
   baseMove(31);
   waitBase(2000);
-  baseTurn(-94, 0.35, 0, 10);
+  baseTurn(-94, 0.34, 0, 10);
   waitBase(2000);
   intake(-5);
   baseMove(-23);
   waitBase(2000);
   // baseMove(10);
   // waitBase(1000);
-  baseTurn(-48, 0 , 0.3, 0, 10, false);
+  baseTurn(-49, 0 , 0.3, 0, 10, false);
   waitBase(2000);
   // wait(500, msec);
   // resetPrevEncd();
@@ -47,7 +48,7 @@ void red10() {
   baseMove(-40);
   intake(-50);
   waitBase(3000);
-  baseTurn(69, -3, 0.34, 0, 10, false);
+  baseTurn(69, -2, 0.33, 0, 10, false);
   waitBase(2000);
   // wait(500, msec);
   // resetPrevEncd();
@@ -55,10 +56,11 @@ void red10() {
   baseMove(98);
   waitBase(3000);
   baseMove(20);
+  wait(100, msec);
   shootBall();
   wait(200, msec);
   forceOuttake(true);
-  // intake(-20);
+  intake(-20);
 }
 
 void blue10() {

@@ -13,9 +13,11 @@ bool autoIndex = true;
 int indexerControl() {
   Indexer.spin(fwd, defaultIndexSpeed, pct);
   while(true) {
-    if(autoIndex) {
+    // if(autoIndex) {
       // printf("sensors %d, %d\n", ShooterLine.value(pct), IndexerLine.value(pct));
-      if(shootTrigger) Indexer.spin(fwd, defaultIndexSpeed, pct);
+      if(!autoIndex) {
+        Indexer.spin(fwd, 20, pct);
+      }else if(shootTrigger) Indexer.spin(fwd, defaultIndexSpeed, pct);
       else if(forcedOuttake) Indexer.spin(fwd, -defaultIndexSpeed, pct);
       else {
         if(ShooterLine.value(pct) < SHOOTER_BALL_THRESHOLD && IndexerLine.value(pct) < ROUTER_BALL_THRESHOLD) {
@@ -25,7 +27,7 @@ int indexerControl() {
           Indexer.spin(fwd, defaultIndexSpeed, pct);
           loaded = false;
         }
-      }
+      // }
     }
     wait(5, msec);
   }
@@ -48,7 +50,7 @@ void waitShooter() {
 bool shootReverse = false;
 int shooterControl() {
   while(true) {
-    if(autoIndex) {
+    // if(autoIndex) {
       if(shootReverse) {
         Shooter.spin(fwd, -defaultShootSpeed, pct);
       }else if(shootTrigger) {
@@ -59,7 +61,7 @@ int shooterControl() {
       }else {
         Shooter.stop(brake);
       }
-    }
+    // }
   }
 }
 

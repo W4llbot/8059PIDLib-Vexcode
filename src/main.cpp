@@ -62,7 +62,7 @@ void autonomous(void) {
   double start = Timer.time();
   pauseBase = false;
   // baseMove(30);
-  // baseTurn(0, -10, false);
+  // baseTurn(108, 0.33, 0, 10);
   // wait(100000000, msec);
   red10();
   // printf("atan: %.2f\n", atan2(-10, -5) * toDeg);
@@ -120,21 +120,23 @@ void usercontrol(void) {
     // values based on feedback from the joysticks.
     // Controller1.ButtonB.pressed(toggleAutoIndex);
 
-    if(autoIndex) {
+    // if(autoIndex) {
       shootReverse = Controller1.ButtonR2.pressing();
       if(Controller1.ButtonR1.pressing()) shootBall();
       forceOuttake(Controller1.ButtonL2.pressing());
       if(Controller1.ButtonX.pressing()) {
         shootBall();
         defaultShootSpeed = 20;
+        autoIndex = false;
       }else {
         defaultShootSpeed = 100;
+        autoIndex = true;
       }
-    }else {
-      double cycleDir = (Controller1.ButtonR1.pressing() - Controller1.ButtonR2.pressing());
-      Indexer.spin(fwd, cycleDir*100, pct);
-      Shooter.spin(fwd, cycleDir*100, pct);
-    }
+    // }else {
+    //   double cycleDir = (Controller1.ButtonR1.pressing() - Controller1.ButtonR2.pressing());
+    //   Indexer.spin(fwd, cycleDir*100, pct);
+    //   Shooter.spin(fwd, cycleDir*100, pct);
+    // }
     intake((Controller1.ButtonL1.pressing() - Controller1.ButtonL2.pressing()) * defaultShootSpeed);
 
     Controller1.ButtonY.pressed(toggleDriveMode);
