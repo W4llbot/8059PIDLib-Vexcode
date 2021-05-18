@@ -3,9 +3,11 @@ const double inPerDeg = 0.0243666691788904;
 const double baseWidth = 9.986975605244217;
 double X = 0, Y = 0, prevEncdL = 0, prevEncdR = 0, prevAngle = 0;
 double angle = 0, lastResetAngle = 0;
-void setCoords(double x, double y, double angle){
+void setCoords(double x, double y, double a){
   X = x;
   Y = y;
+  lastResetAngle = a*toRad;
+  angle = a*toRad;
 }
 int Odometry(){
   while(true){
@@ -36,6 +38,6 @@ int Odometry(){
   return 0;
 }
 void resetPrevEncd() {
-  prevEncdL = 0;
-  prevEncdR = 0;
+  prevEncdL = encdL;
+  prevEncdR = encdR;
 }

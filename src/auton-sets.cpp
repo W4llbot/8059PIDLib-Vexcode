@@ -1,5 +1,5 @@
-// #include "vex.h"
-// #include "auton-sets.h"
+#include "vex.h"
+#include "auton-sets.h"
 
 void shootPreload() {
 //   defaultShootSpeed = 50;
@@ -12,53 +12,53 @@ void shootPreload() {
 
 // double offset = 0;
 
+
+// #define DEFAULT_KP 0.23
+// #define DEFAULT_KI 0
+// #define DEFAULT_KD 10
+// #define DEFAULT_TURN_KP 0.32
+// #define DEFAULT_TURN_KI 0
+// #define DEFAULT_TURN_KD 10
 void red10() {
-//   resetCoords(0, 0);
-//   offset = 59.5;
-//   shootPreload();
-
-//   // Intake red ball
-//   baseMove(27, 0.15, 0);
-//   waitBase(2000);
-//   baseTurn(0 + offset, 1.1, 0);
-//   waitBase(1000);
-//   intake(127);
-//   baseMove(32.5, 0.155, 0);
-//   waitBase(2000);
-//   // wait(1000, msec);
-
-//   // Turn and ram ball
-//   baseTurn(-93 + offset, 0.97, 0);
-//   waitBase(1500);
-//   baseMove(-22, 0.17, 0);
-//   waitBase(2000);
-//   wait(200, msec);
-
-//   // turn and score goal 2
-//   baseTurn(-135 + offset, 1.15, 0);
-//   waitBase(2000);
-//   baseMove(63.5, 0.155, 0);
-//   intake(127);
-//   waitBase(2000);
-//   intake(-127);
-//   shootBall();
-//   wait(10, msec);
-//   waitShooter();
-
-//   baseMove(-55, 0.135, 0);
-//   waitBase(3000);
-//   baseTurn(-236 + offset, 0.95, 0);
-//   waitBase(2000);
-//   baseMove(73, 1.3, 0);
-//   intake(127);
-//   waitBase(3000);
-//   intake(-127);
-//   shootBall();
-//   wait(200, msec);
-//   intake(-127);
-//   forceOuttake(true);
-//   wait(300, msec);
-//   // forceOuttake(false);
+  resetCoords(0, 0, -58.3);
+  baseMove(33);
+  waitBase(2000);
+  baseTurn(-27, 60, 0.34, 0, 10, false);
+  waitBase(2000);
+  intake(100);
+  baseMove(31);
+  waitBase(2000);
+  baseTurn(-94, 0.35, 0, 10);
+  waitBase(2000);
+  intake(-5);
+  baseMove(-23);
+  waitBase(2000);
+  // baseMove(10);
+  // waitBase(1000);
+  baseTurn(-48, 0 , 0.3, 0, 10, false);
+  waitBase(2000);
+  // wait(500, msec);
+  // resetPrevEncd();
+  // intake(0);
+  resetPrevEncd();
+  baseMove(62);
+  waitBase(3000);
+  intake(0);
+  baseMove(-40);
+  intake(-50);
+  waitBase(3000);
+  baseTurn(69, -3, 0.34, 0, 10, false);
+  waitBase(2000);
+  // wait(500, msec);
+  // resetPrevEncd();
+  intake(-5);
+  baseMove(98);
+  waitBase(3000);
+  baseMove(20);
+  shootBall();
+  wait(200, msec);
+  forceOuttake(true);
+  // intake(-20);
 }
 
 void blue10() {
@@ -109,5 +109,5 @@ void blue10() {
 //   intake(-127);
 //   forceOuttake(true);
 //   wait(500, msec);
-//   // forceOuttake(false);
+//   forceOuttake(false);
 }

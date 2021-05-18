@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       VEX                                                       */
@@ -58,14 +58,17 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  resetCoords(0, 0, 0);
+  // resetCoords(0, 0, 0);
   double start = Timer.time();
   pauseBase = false;
-  baseTurn(180, 0.33, 0, 10);
-  wait(100000000, msec);
-  // red10();
+  // baseMove(30);
+  // baseTurn(0, -10, false);
+  // wait(100000000, msec);
+  red10();
+  // printf("atan: %.2f\n", atan2(-10, -5) * toDeg);
   double final = Timer.time() - start;
-  Controller1.Screen.setCursor(0, 0);
+  Controller1.Screen.setCursor(1, 0);
+  printf("Run time: %.2f", final);
   while(true) Controller1.Screen.print("Time: %.2f\n", final);
 
   // ..........................................................................
@@ -118,6 +121,7 @@ void usercontrol(void) {
     // Controller1.ButtonB.pressed(toggleAutoIndex);
 
     if(autoIndex) {
+      shootReverse = Controller1.ButtonR2.pressing();
       if(Controller1.ButtonR1.pressing()) shootBall();
       forceOuttake(Controller1.ButtonL2.pressing());
       if(Controller1.ButtonX.pressing()) {

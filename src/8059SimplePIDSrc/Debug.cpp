@@ -24,7 +24,9 @@ void printPowerTerminal(){
 void printAllTerminal() {
   // printf("x: %.2f y: %.2f bearing: %.2f\t", X, Y, angle * toDeg);
   printf("errorEncdL: %.2f errorEncdR: %.2f\t", errorEncdL, errorEncdR);
-  printf("powerL: %.2f powerR: %.2f\n", powerL, powerR);
+  printf("targPowerL: %.2f, targPowerR: %.2f\t", targPowerL, targPowerR);
+  printf("powerL: %.2f powerR: %.2f\t", powerL, powerR);
+  printf("curr angle: %.2f\n", angle*toDeg);
 }
 int Debug(){
   while(true){

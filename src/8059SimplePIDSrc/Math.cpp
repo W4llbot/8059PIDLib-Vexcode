@@ -14,3 +14,14 @@ double abscap(double x, double abscap){
   else if(x < -abscap) return -abscap;
   else return x;
 }
+
+double min(double a, double b) {
+  if(a>b) return b;
+  else return a;
+}
+
+int sign(double x){
+  if(fabs(x) <= 1/1e9) return 0;
+  else if(x > 0) return 1;
+  else return -1;
+}

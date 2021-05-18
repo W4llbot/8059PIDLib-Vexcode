@@ -37,18 +37,21 @@ bool isLoaded() {
 
 void waitShooter() {
   // while(!isLoaded()) delay(5);
-  while(isLoaded()) wait(5, msec);
-  while(!isLoaded()) wait(5, msec);
+  while(isLoaded() && !shootReverse) wait(5, msec);
+  while(!isLoaded() && !shootReverse) wait(5, msec);
   // while(shooterLine.get_value() < SHOOTER_BALL_THRESHOLD) delay(5);
   // while(shootTrigger) delay(5);
   // while(shooterLine.get_value() < SHOOTER_BALL_THRESHOLD) delay(5);
 }
 
 // bool autoShoot = true;
+bool shootReverse = false;
 int shooterControl() {
   while(true) {
     if(autoIndex) {
-      if(shootTrigger) {
+      if(shootReverse) {
+        Shooter.spin(fwd, -defaultShootSpeed, pct);
+      }else if(shootTrigger) {
         Shooter.spin(fwd, defaultShootSpeed, pct);
         waitShooter();
         // while(Controller1.ButtonR1.pressing()) wait(5, msec);

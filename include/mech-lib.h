@@ -2,7 +2,7 @@
 #define _MECH_LIB_H_
 
 extern double defaultShootSpeed;
-extern bool shootTrigger, autoIndex;
+extern bool shootTrigger, autoIndex, shootReverse;
 int indexerControl();
 
 int shooterControl();
