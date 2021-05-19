@@ -1,12 +1,12 @@
 #include "vex.h"
-#define DEFAULT_KP 0.23
+#define DEFAULT_KP 0.21
 #define DEFAULT_KI 0
 #define DEFAULT_KD 10
 #define DEFAULT_TURN_KP 0.32
 #define DEFAULT_TURN_KI 0
 #define DEFAULT_TURN_KD 10
 #define KI_LIMIT 0
-#define RAMPING_POW 2
+#define RAMPING_POW 1.5
 #define DISTANCE_LEEWAY 10
 #define MAX_POW 100
 
@@ -60,7 +60,7 @@ void baseMove(double x, double y){
 
 
 void baseTurn(double a, double kp, double ki, double kd){
-  wait(100, msec);
+  // wait(100, msec);
   printf("baseTurn(%.2f, %.2f, %.2f)\n", a, kp, kd);
   double error = a*toRad - angle;
   double diff = error*baseWidth/inPerDeg/2;
