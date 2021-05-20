@@ -7,7 +7,7 @@
 #define DEFAULT_TURN_KD 10
 #define KI_LIMIT 0
 #define RAMPING_POW 1.5
-#define DISTANCE_LEEWAY 10
+#define DISTANCE_LEEWAY 15
 #define MAX_POW 100
 
 double targEncdL = 0, targEncdR = 0;
