@@ -1,12 +1,12 @@
 #include "vex.h"
-#define DEFAULT_KP 0.21
+#define DEFAULT_KP 0.17
 #define DEFAULT_KI 0
-#define DEFAULT_KD 10
-#define DEFAULT_TURN_KP 0.32
+#define DEFAULT_KD 5
+#define DEFAULT_TURN_KP 0.29
 #define DEFAULT_TURN_KI 0
 #define DEFAULT_TURN_KD 10
 #define KI_LIMIT 0
-#define RAMPING_POW 1.5
+#define RAMPING_POW 1
 #define DISTANCE_LEEWAY 15
 #define MAX_POW 100
 
@@ -142,7 +142,17 @@ void waitBase(double cutoff){
 	double start = Timer.time();
   while((fabs(targEncdL - encdL) > DISTANCE_LEEWAY || fabs(targEncdR - encdR) > DISTANCE_LEEWAY) && (Timer.time()-start) < cutoff) wait(20, msec);
   printf("Time taken %.2f\n", (Timer.time() - start));
-  wait(100, msec);
+  wait(200, msec);
+  // targEncdL = encdL;
+  // targEncdR = encdR;
+  resetPrevEncd();
+}
+
+void waitBaseNoD(double cutoff){
+	double start = Timer.time();
+  while((fabs(targEncdL - encdL) > DISTANCE_LEEWAY || fabs(targEncdR - encdR) > DISTANCE_LEEWAY) && (Timer.time()-start) < cutoff) wait(20, msec);
+  printf("Time taken %.2f\n", (Timer.time() - start));
+  // wait(200, msec);
   // targEncdL = encdL;
   // targEncdR = encdR;
   resetPrevEncd();

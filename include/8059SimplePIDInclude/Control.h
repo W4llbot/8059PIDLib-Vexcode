@@ -19,6 +19,7 @@ void powerBase(double l, double r);
 void timerBase(double l, double r, double t);
 void unPauseBase();
 void waitBase(double cutoff);
+void waitBaseNoD(double cutoff);
 int Control();
 void resetCoords(double x, double y, double a);
 #endif

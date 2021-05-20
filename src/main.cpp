@@ -61,11 +61,12 @@ void autonomous(void) {
   // resetCoords(0, 0, 0);
   double start = Timer.time();
   pauseBase = false;
-  // baseMove(30, 0.21, 0, 10);
-  // baseTurn(94, 0.31, 0, 10);
+  // baseMove(60, 0.15, 0, 10);
+  // baseTurn(94, 0.29, 0, 10);
+  // baseTurn(60, 0.295, 0, 10);
   // wait(100000000, msec);
-  red10();
-  // blue10();
+  // red10();
+  blue10();
   // printf("atan: %.2f\n", atan2(-10, -5) * toDeg);
   double final = Timer.time() - start;
   Controller1.Screen.setCursor(1, 0);
