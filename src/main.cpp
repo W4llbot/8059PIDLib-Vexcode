@@ -66,7 +66,7 @@ void autonomous(void) {
   // baseTurn(60, 0.295, 0, 10);
   // wait(100000000, msec);
   // red10();
-  blue10();
+  red10();
   // printf("atan: %.2f\n", atan2(-10, -5) * toDeg);
   double final = Timer.time() - start;
   Controller1.Screen.setCursor(1, 0);
